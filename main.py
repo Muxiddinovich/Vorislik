@@ -35,11 +35,13 @@
 
 
 
-
+import uuid
+from random import choice
 
 
 class Product:
     def __init__(self, name, price, quantity):
+        self.id=uuid.uuid4()
         self.name=name
         self.price=price
         self.quantity=quantity
@@ -47,7 +49,7 @@ class Product:
 
 
     def info(self):
-        print(f"Bu maxsulot nomi {self.name}, narxi {self.price}, miqdori {self.quantity}")
+        print(f"Bu maxsulot nomi {self.name}, narxi {self.price}, miqdori {self.quantity}, ID: {self.id}")
 
     def sell(self, amount):
         if self.quantity>=amount:
@@ -65,8 +67,6 @@ class Product:
 
 
 
-a=Product("Apple", 1000, 10)
-a.info()
 
 
 
@@ -77,7 +77,7 @@ class Electronics(Product):
         self.warranty=warranty
 
     def info(self):
-        print(f"Nomi {self.name}, Narxi {self.price}, Miqdori {self.quantity}, Garantiyasi {self.warranty}")
+        print(f"Nomi {self.name}, Narxi {self.price}, Miqdori {self.quantity}, Garantiyasi {self.warranty}, ID: {self.id}")
 
 
 
@@ -87,7 +87,7 @@ class Food(Product):
         self.expiration_date=expiration_date
 
     def info(self):
-        print(f"Nomi {self.name}, Narxi {self.price}, Miqdori {self.quantity}, Yaroqlilik muddati {self.expiration_date}")
+        print(f"Nomi {self.name}, Narxi {self.price}, Miqdori {self.quantity}, Yaroqlilik muddati {self.expiration_date}, ID: {self.id}")
 
 
     def sell(self, amount):
@@ -103,17 +103,17 @@ class Basket:
     def __init__(self):
         self.data = []
 
-    def add(self, product, price):
-        self.data.append({'product': product, 'price': price})
-        print(f"{product} ({price}) savatga qo'shildi")
+    def add(self, product):
+        self.data.append({'product': product, 'price': product.price})
+        print(f"{product.name} ({product.price}) savatga qo'shildi")
 
-    def remove(self, product):
+    def remove(self, product_name):
         for item in self.data:
-            if item['product'] == product:
+            if item['product'].name == product_name:
                 self.data.remove(item)
-                print(f"{product} savatdan olib tashlandi")
+                print(f"{item['product'].name} savatdan olib tashlandi")
                 return
-        print(f"{product} savatda topilmadi")
+        print(f"{product_name} savatda topilmadi")
 
     def show(self):
         if not self.data:
@@ -128,27 +128,41 @@ class Basket:
         print(f"Umumiy narx: {total}")
 
 
-basket = Basket()
-basket.add("olma", 2)
-basket.add("nok", 1)
-basket.show()
-basket.calculating()
-basket.remove("Shaftoli")
-basket.show()
+def menu():
+    basket=Basket()
+    while True:
+        print("\nMenu")
+        print("1. Maxsulot qo'shish!")
+        print("2. Maxsulot olib tashlash!")
+        print("3. Savatni ko'rsatish!")
+        print("4.Umumiy narxni hisoblash!")
+        print("5. Chiqish")
+        choice=input("Tanlang!")
+        if choice=="1":
+            name=input("Maxsulot nomi:")
+            price=float(input("Maxsulot narxi:"))
+            quantity=int(input("Maxsulot miqdori:"))
+            product=Product(name, price, quantity)
+            basket.add(product)
+
+        elif choice=="2":
+            product_name=input("Olib tashlanadigan maxsulot nomi:")
+            basket.remove(product_name)
+
+        elif choice=="3":
+            basket.show()
+
+        elif choice=="4":
+            basket.calculating()
+
+        elif choice=="5":
+            print("Dasturdan chiqyabsiz...")
+
+        else:
+            print("Notog'ri tanlov, Iltimos qaytadan urinib ko'ring.")
 
 
-
-
-e=Electronics("Muzlatgich", 100, "10ta", "1yil")
-print(e.info())
-
-
-
-f = Food("Sut", 500, 20, 0)  # Yaroqlilik muddati o'tgan
-print(f.info())
-f.sell(5)
-
-
+menu()
 
 
 
